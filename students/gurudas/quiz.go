@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
-	"bufio"
 	"os"
 	"log"
-	"strings"
 	"strconv"
+	"encoding/csv"
 )
 
 func main() {
-	var user, ans, correct, total int;
+	var user, ans, correct, total int
 
 	f, err := os.Open("problems.csv")
 	if err != nil {
@@ -18,25 +17,21 @@ func main() {
 	}
 	defer f.Close()
 
-	scanner := bufio.NewScanner(f)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		total++
-
-		split := strings.Split(line, ",")
-		ans, _ = strconv.Atoi(split[1])
-		fmt.Print(split[0], " = ")
-
-		fmt.Scan(&user)
-
-		if user == ans {
-			correct++;
-		}
+	csvReader := csv.NewReader(f)
+	data, err := csvReader.ReadAll()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+	total = len(data)
+
+	for _, fields := range data {
+		fmt.Print(fields[0], " = ")
+		ans, _ = strconv.Atoi(fields[1])
+		fmt.Scan(&user)
+		if user == ans {
+			correct++
+		}
 	}
 
 	fmt.Printf("You got %d out of %d questions right!\n", correct, total)
