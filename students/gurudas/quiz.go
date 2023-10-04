@@ -6,12 +6,16 @@ import (
 	"log"
 	"strconv"
 	"encoding/csv"
+	"flag"
 )
 
 func main() {
 	var user, ans, correct, total int
 
-	f, err := os.Open("problems.csv")
+	csvFile := flag.String("f", "problems.csv", "A CSV file formatted as question,answer")
+	flag.Parse()
+
+	f, err := os.Open(*csvFile)
 	if err != nil {
 		log.Fatal(err)
 	}
